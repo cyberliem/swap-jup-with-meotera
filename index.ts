@@ -6,6 +6,8 @@ import {
   Keypair,
   PublicKey,
   sendAndConfirmTransaction,
+  SendOptions,
+  Commitment,
 } from "@solana/web3.js";
 
 import bs58 from 'bs58';
@@ -14,15 +16,15 @@ import bs58 from 'bs58';
 
 const your_node = "<your quiknode>"
 const your_privatekey = "<your key>"
-const your_pool = "<your pool>"
+const your_pool = `FoSDw2L5DmTuQTFe55gWPDXf88euaxAEKFre74CnvQbX`
 const swapAmount = new BN(100)
 const yourslippage = new BN(10000)
-const swapYtoX = false;
-
+const swapYtoX = true;
+const numberOfSwap = 5;
 
 console.log(your_node)
 //connection
-const connection = new Connection(your_node, "confirmed");
+const connection = new Connection(your_node, "processed");
 
 //setup key
 
@@ -45,24 +47,38 @@ let user = Keypair.fromSecretKey(secretKey);
     yourslippage,
     binArrays
   );
-
+  const myCommitment: Commitment = 'processed'
+  const customSendOptions = {
+    skipPreflight: true,   // Optional, whether to skip preflight checks
+    commitment: 'recent',   // Optional, commitment level for finalizing transaction
+    preflightCommitment: myCommitment // Optional, commitment level for preflight checks
+};
   // Swap
   const swapTx = await dlmmPool.swap({
-    inToken: dlmmPool.tokenX.publicKey,
+    inToken: dlmmPool.tokenY.publicKey,
     binArraysPubkey: swapQuote.binArraysPubkey,
     inAmount: swapAmount,
     lbPair: dlmmPool.pubkey,
     user: user.publicKey,
     minOutAmount: swapQuote.minOutAmount,
-    outToken: dlmmPool.tokenY.publicKey,
+    outToken: dlmmPool.tokenX.publicKey,
   });
+  const transactions: Promise<string | void>[] = [];
 
-  try {
-    const swapTxHash = await sendAndConfirmTransaction(connection, swapTx, [
-      user,
-    ]);
-    console.log(swapTxHash)
-  } catch (error) {
-    console.log(error)
+  for (let i = 0; i < numberOfSwap; i++) {
+    // Push each transaction into the array
+    transactions.push(
+      connection.sendTransaction(swapTx, [user], customSendOptions)
+        .catch(error => console.log(`Error sending transaction ${i}:`, error))
+    );
   }
+  await Promise.all(transactions);
+
+  // try {
+  //   connection.sendTransaction(swapTx,[
+  //     user, 
+  //   ],customSendOptions);
+  // } catch (error) {
+  //   console.log(error)
+  // }
 })()
