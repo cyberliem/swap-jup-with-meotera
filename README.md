@@ -6,11 +6,14 @@ yarn install
 ```
 
 Change your:
- - quik node URL
+ - node URL (can get a free quik node/ paid quik node to try)
  - privatekey 
- - pool (need to swap JUP pool, in the example I used SOL-USDC for testing)
- - number of tokens 
+ - pool (Currenty set to JUP-USDC pool)
+ - number of tokens (curently set to 100 USDC per trade)
  - slippage tollerange
+ - number of trade you want to spam the node
+ 
+Starting before 10pm, start running script in multiple terminal for best result
 
 then run
 ```

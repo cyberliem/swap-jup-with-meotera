@@ -16,8 +16,8 @@ import bs58 from 'bs58';
 
 const your_node = "<your quiknode>"
 const your_privatekey = "<your key>"
-const your_pool = `FoSDw2L5DmTuQTFe55gWPDXf88euaxAEKFre74CnvQbX`
-const swapAmount = new BN(100)
+const your_pool = `GhZtugCqUskpDPiuB5zJPxabxpZZKuPZmAQtfSDB3jpZ`
+const swapAmount = new BN(1000000)
 const yourslippage = new BN(10000)
 const swapYtoX = true;
 const numberOfSwap = 5;
